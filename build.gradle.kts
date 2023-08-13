@@ -18,6 +18,10 @@ dependencies {
     boot("spring-boot-starter")
     boot("spring-boot-starter-batch")
     boot("spring-boot-starter-test", test = true)
+    implementation("com.h2database:h2:1.4.200")
+    implementation("com.mysql:mysql-connector-j:8.0.33")
+    compileOnly("org.projectlombok:lombok:1.18.20")
+    annotationProcessor("org.projectlombok:lombok:1.18.20")
 }
 
 tasks.withType<Test> {
