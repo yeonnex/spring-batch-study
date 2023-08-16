@@ -1,5 +1,6 @@
 package com.example.hellobatch;
 
+import com.example.hellobatch.tasklet.CustomTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -27,12 +28,7 @@ public class HelloJobConfiguration {
     @Bean
     Step helloJobStep1() {
         return stepBuilderFactory.get("helloStep1")
-                .tasklet((contribution, chunkContext) -> {
-                    System.out.println("===================");
-                    System.out.println(" >> 안녕, 스프링 배치 step 1");
-                    System.out.println("===================");
-                    return RepeatStatus.FINISHED;
-                }).build();
+                .tasklet(new CustomTasklet()).build();
     }
 
     @Bean
