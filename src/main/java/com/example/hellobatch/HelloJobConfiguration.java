@@ -42,7 +42,8 @@ public class HelloJobConfiguration {
                     System.out.println("===================");
                     System.out.println(" >> 안녕, 스프링 배치 step 2");
                     System.out.println("===================");
-                    return RepeatStatus.FINISHED;
+                    throw new RuntimeException("step2 가 실패하였습니다...");
+//                    return RepeatStatus.FINISHED;
                 }).build();
     }
 }
