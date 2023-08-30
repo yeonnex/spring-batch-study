@@ -16,14 +16,12 @@ public class HelloJobConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final JobExecutionListener jobExecutionListener;
 
     @Bean
     Job job() {
         return jobBuilderFactory.get("hiJob")
                 .start(step1())
                 .next(step2())
-                .listener(jobExecutionListener)
                 .build();
     }
 

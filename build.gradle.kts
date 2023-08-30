@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     boot("spring-boot-starter")
+    boot("spring-boot-starter-web")
     boot("spring-boot-starter-batch")
     boot("spring-boot-starter-test", test = true)
     implementation("com.h2database:h2:1.4.200")
