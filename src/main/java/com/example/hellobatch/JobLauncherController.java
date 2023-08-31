@@ -13,11 +13,10 @@ import org.springframework.boot.autoconfigure.batch.BasicBatchConfigurer;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 
-@RestController
+//@RestController
 @RequiredArgsConstructor
 public class JobLauncherController {
     private final Job job;
