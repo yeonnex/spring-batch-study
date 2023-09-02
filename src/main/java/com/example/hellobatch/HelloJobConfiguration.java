@@ -9,6 +9,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.job.DefaultJobParametersValidator;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.Flow;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -33,9 +34,10 @@ public class HelloJobConfiguration {
                 .start(step1())
                 .next(step2())
                 //.validator(new CustomJobParametersValidator())
-                .validator(new DefaultJobParametersValidator(new String[]{"name", "date"},
-                                                                                new String[]{"count"}))
-                .preventRestart()
+                //.validator(new DefaultJobParametersValidator(new String[]{"name", "date"},
+                //                                             new String[]{"count"}))
+                // .incrementer(new CustomJobParametersIncrementer())
+                .incrementer(new RunIdIncrementer())
                 .build();
     }
 
@@ -68,7 +70,7 @@ public class HelloJobConfiguration {
     Step step2() {
         return stepBuilderFactory.get("step2")
                 .tasklet((contribution, chunkContext) -> {
-                    throw new RuntimeException("스텝 2 실패 했다~");
+                    return RepeatStatus.FINISHED;
                 })
                 .build();
     }
