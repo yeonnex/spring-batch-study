@@ -35,6 +35,7 @@ public class HelloJobConfiguration {
                 //.validator(new CustomJobParametersValidator())
                 .validator(new DefaultJobParametersValidator(new String[]{"name", "date"},
                                                                                 new String[]{"count"}))
+                .preventRestart()
                 .build();
     }
 
@@ -57,7 +58,6 @@ public class HelloJobConfiguration {
                 .tasklet(new Tasklet() {
                     @Override
                     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-                        Thread.sleep(3000);
                         return RepeatStatus.FINISHED;
                     }
                 })
@@ -67,7 +67,9 @@ public class HelloJobConfiguration {
     @Bean
     Step step2() {
         return stepBuilderFactory.get("step2")
-                .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED)
+                .tasklet((contribution, chunkContext) -> {
+                    throw new RuntimeException("스텝 2 실패 했다~");
+                })
                 .build();
     }
 
