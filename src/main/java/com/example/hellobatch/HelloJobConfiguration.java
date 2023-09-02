@@ -6,6 +6,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.DefaultJobParametersValidator;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -23,21 +24,26 @@ public class HelloJobConfiguration {
 
     /**
      * 심플 잡을 생성 한다.
+     *
      * @return 심플 잡
      */
-    // @Bean
+    @Bean
     Job job() {
         return jobBuilderFactory.get("hiJob")
                 .start(step1())
                 .next(step2())
+                //.validator(new CustomJobParametersValidator())
+                .validator(new DefaultJobParametersValidator(new String[]{"name", "date"},
+                                                                                new String[]{"count"}))
                 .build();
     }
 
     /**
      * 플로우 잡을 생성 한다. 플로우 잡을 마칠 떄에는 {@code .end()} 를 반드시 호출해야 한다.
+     *
      * @return 플로우 잡
      */
-    @Bean
+//    @Bean
     Job batchJob2() {
         return jobBuilderFactory.get("batchJob2")
                 .start(flow())
