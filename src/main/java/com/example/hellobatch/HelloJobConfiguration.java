@@ -12,6 +12,7 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.*;
+import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -140,7 +141,7 @@ public class HelloJobConfiguration {
                 .<String, String>chunk(3)
                 .reader(new ItemReader<String>() {
                     @Override
-                    public String read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+                    public String read() throws Exception {
                         return null;
                     }
                 })
@@ -195,6 +196,7 @@ public class HelloJobConfiguration {
 
     /**
      * 플로우를 실행시키는 스텝을 생성한다
+     *
      * @return 플로우 스텝
      */
     @Bean
@@ -202,6 +204,47 @@ public class HelloJobConfiguration {
         FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow");
         flowBuilder.start(step2()).end();
         return flowBuilder.build();
+    }
+
+    /**
+     * 태스크 기반 태스크릿 스텝을 생성한다
+     *
+     * @return 태스크기반 태스크릿 스텝
+     */
+    @Bean
+    Step step10() {
+        return stepBuilderFactory.get("step10")
+                .tasklet(new Tasklet() {
+                    @Override
+                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+                        return RepeatStatus.FINISHED;
+                    }
+                })
+                .build();
+    }
+
+    /**
+     * 청크기반 태스크릿 스텝을 생성한다
+     *
+     * @return 청크기반 태스크릿 스텝
+     */
+    @Bean
+    Step step11() {
+        return stepBuilderFactory.get("step11")
+                .<String, String>chunk(10)
+                .reader(new ListItemReader<>(List.of("item1", "item2", "item3", "item4", "item5")))
+                .processor(new ItemProcessor<String, String>() {
+                    @Override
+                    public String process(String item) throws Exception {
+                        return item.toUpperCase();
+                    }
+                })
+                .writer(new ItemWriter<String>() {
+                    @Override
+                    public void write(List<? extends String> items) throws Exception {
+                        items.forEach(item -> System.out.println(item));
+                    }
+                }).build();
     }
 
 }
