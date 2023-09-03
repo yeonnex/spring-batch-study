@@ -1,5 +1,6 @@
 package com.example.hellobatch;
 
+import com.example.hellobatch.tasklet.MyTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -25,6 +26,7 @@ public class HelloJobConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final MyTasklet myTasklet;
 
     /**
      * 심플 잡을 생성 한다.
@@ -245,6 +247,14 @@ public class HelloJobConfiguration {
                         items.forEach(item -> System.out.println(item));
                     }
                 }).build();
+    }
+
+    @Bean
+    Step step12() {
+        return stepBuilderFactory.get("step12")
+                // .tasklet(new MyTasklet())
+                .tasklet(myTasklet)
+                .build();
     }
 
 }
