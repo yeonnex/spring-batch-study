@@ -6,15 +6,17 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.job.DefaultJobParametersValidator;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.*;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class HelloJobConfiguration {
      * @return 심플 잡
      */
     @Bean
-    Job job() {
+    Job hiJob() {
         return jobBuilderFactory.get("hiJob")
                 .start(step1())
                 .next(step2())
@@ -76,8 +78,8 @@ public class HelloJobConfiguration {
     }
 
     @Bean
-    Flow flow() {
-        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow");
+    Flow helloFlow() {
+        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("helloFlow");
         return flowBuilder
                 .start(step3())
                 .next(step4())
@@ -112,6 +114,94 @@ public class HelloJobConfiguration {
                     return RepeatStatus.FINISHED;
                 })
                 .build();
+    }
+
+
+    /**
+     * 태스크릿 스텝을 생성한다
+     *
+     * @return 태스트릿스텝
+     */
+    @Bean
+    Step step6() {
+        return stepBuilderFactory.get("step6")
+                .tasklet((contribution, chunkContext) -> null)
+                .build();
+    }
+
+    /**
+     * 청크기반 스텝을 생성한다
+     *
+     * @return 청크기반 스텝
+     */
+    @Bean
+    Step step7() {
+        return stepBuilderFactory.get("step7")
+                .<String, String>chunk(3)
+                .reader(new ItemReader<String>() {
+                    @Override
+                    public String read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+                        return null;
+                    }
+                })
+                .processor(new ItemProcessor<String, String>() {
+                    @Override
+                    public String process(String item) throws Exception {
+                        return null;
+                    }
+                })
+                .writer(new ItemWriter<String>() {
+                    @Override
+                    public void write(List<? extends String> items) throws Exception {
+
+                    }
+                })
+                .build();
+    }
+
+    /**
+     * 멀티스레드 방식으로 잡을 실행하는 파티션스텝을 생성한다
+     *
+     * @return 파티션 스텝
+     */
+    @Bean
+    Step step8() {
+        return stepBuilderFactory.get("step8")
+                .partitioner(step1())
+                .gridSize(2)
+                .build();
+    }
+
+    /**
+     * 잡을 품고 있는 스텝을 생성한다.
+     *
+     * @return 잡 스텝
+     */
+    @Bean
+    Step step9() {
+        return stepBuilderFactory.get("step9")
+                .job(job())
+                .build();
+    }
+
+    @Bean
+    Job job() {
+        return jobBuilderFactory.get("job")
+                .start(step1())
+                .start(step2())
+                .start(step3())
+                .build();
+    }
+
+    /**
+     * 플로우를 실행시키는 스텝을 생성한다
+     * @return 플로우 스텝
+     */
+    @Bean
+    Flow flow() {
+        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow");
+        flowBuilder.start(step2()).end();
+        return flowBuilder.build();
     }
 
 }
