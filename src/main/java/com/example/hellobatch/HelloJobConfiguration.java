@@ -12,7 +12,9 @@ import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.item.*;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
@@ -254,6 +256,31 @@ public class HelloJobConfiguration {
         return stepBuilderFactory.get("step12")
                 // .tasklet(new MyTasklet())
                 .tasklet(myTasklet)
+                .build();
+    }
+
+    /**
+     * 스텝의 성공 여부와 상관 없이 항상 실행되는 스텝을 생성한다
+     * @return 스텝
+     */
+    @Bean
+    Step step13() {
+        return stepBuilderFactory.get("step13")
+                .tasklet(myTasklet)
+                .allowStartIfComplete(true)
+                .build();
+    }
+
+    /**
+     * 최대 세번까지만 실행될 수 있는 스텝을 생성한다.
+     * @return 스텝
+     * @throws org.springframework.batch.core.StartLimitExceededException
+     */
+    @Bean
+    Step step14() {
+        return stepBuilderFactory.get("step14")
+                .tasklet(myTasklet)
+                .startLimit(3)
                 .build();
     }
 
