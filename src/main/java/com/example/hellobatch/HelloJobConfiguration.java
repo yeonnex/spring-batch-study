@@ -18,11 +18,10 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 public class HelloJobConfiguration {
 
@@ -261,6 +260,7 @@ public class HelloJobConfiguration {
 
     /**
      * 스텝의 성공 여부와 상관 없이 항상 실행되는 스텝을 생성한다
+     *
      * @return 스텝
      */
     @Bean
@@ -273,6 +273,7 @@ public class HelloJobConfiguration {
 
     /**
      * 최대 세번까지만 실행될 수 있는 스텝을 생성한다.
+     *
      * @return 스텝
      * @throws org.springframework.batch.core.StartLimitExceededException
      */
