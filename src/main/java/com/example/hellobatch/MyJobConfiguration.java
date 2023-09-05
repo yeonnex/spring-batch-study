@@ -19,6 +19,17 @@ public class MyJobConfiguration {
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
+    Job myJob() {
+        return jobBuilderFactory.get("myJob")
+                .start(step1())
+                .on("COMPLETED").to(complexStep(null))
+                .from(step1())
+                .on("FAILED").to(step2())
+                .end()
+                .build();
+
+    }
+    @Bean
     Job parentJob() {
         return jobBuilderFactory.get("myJob")
                 .start(complexStep(null))
@@ -72,9 +83,11 @@ public class MyJobConfiguration {
                 .tasklet(new Tasklet() {
                     @Override
                     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-                        return RepeatStatus.FINISHED;
+                        throw new RuntimeException("step1 failed...");
+                        // return RepeatStatus.FINISHED;
                     }
                 })
                 .build();
     }
+
 }
