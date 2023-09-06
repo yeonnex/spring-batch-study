@@ -112,6 +112,7 @@ public class MyJobConfiguration {
                 .tasklet(new Tasklet() {
                     @Override
                     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+                        contribution.setExitStatus(ExitStatus.FAILED);
                         log.info("step 4 executed...");
                         return RepeatStatus.FINISHED;
                     }
@@ -145,5 +146,15 @@ public class MyJobConfiguration {
                 .next(step2())
                 .end();
         return flowBuilder.build();
+    }
+
+    @Bean
+    Job jobJob() {
+        return jobBuilderFactory.get("myJob")
+                .start(flowA())
+                .on("FAILED")
+                .to(step2())
+                .end()
+                .build();
     }
 }
